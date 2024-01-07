@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "280025324351",
+    "project_id": "kitasihatmy-f32dc",
+    "storage_bucket": "kitasihatmy-f32dc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:280025324351:android:5d35ef2d28e9f0592c118a",
+        "android_client_info": {
+          "package_name": "com.example.kitasihat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGYsqFhV-DekBIOVPynWEacVOSAkt1vuc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
