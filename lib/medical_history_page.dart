@@ -20,28 +20,12 @@ class _MedicalHistoryState extends State<MedicalHistory> {
   }
 
   void initializeCollections() async {
+    // Initializing default data for 'patient_data'
     await initializeCollectionWithDefaultData('patient_data', {
       'name': 'N/A',
       'age': 'N/A',
       'blood_type': 'N/A',
       'allergies': 'N/A',
-    });
-    await initializeCollectionWithDefaultData('medical_treatment_history', {
-      'doctor_name': 'N/A',
-      'doctor_remarks': 'N/A',
-      'date_of_visit': 'N/A',
-      'treatment_facility': 'N/A',
-      'time_of_visit': 'N/A',
-    });
-    await initializeCollectionWithDefaultData('medication_history', {
-      'medicine_name': 'N/A',
-      'doctor_name': 'N/A',
-      'doctor_instructions': 'N/A',
-      'doctor_remarks': 'N/A',
-      'start_date': 'N/A',
-      'end_date': 'N/A',
-      'facility': 'N/A',
-      'time_of_visit': 'N/A',
     });
   }
 
@@ -119,6 +103,32 @@ class _MedicalHistoryState extends State<MedicalHistory> {
     );
   }
 
+  void _showDetailsDialog(Map<String, dynamic> recordData, String title) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: recordData.entries
+                  .map((entry) => Text('${entry.key}: ${entry.value}'))
+                  .toList(),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget buildPatientDataSection() {
     return FutureBuilder<DocumentSnapshot>(
       future: FirebaseFirestore.instance
@@ -133,9 +143,8 @@ class _MedicalHistoryState extends State<MedicalHistory> {
             snapshot.hasError ||
             snapshot.data?.data() == null) {
           return ElevatedButton(
-            onPressed: () => _showEditDialog({}),
-            child: const Text('Enter Patient Information'),
-          );
+              onPressed: () => _showEditDialog({}),
+              child: const Text('Enter Patient Information'));
         }
         var patientData = snapshot.data!.data() as Map<String, dynamic>;
         return Padding(
@@ -167,67 +176,21 @@ class _MedicalHistoryState extends State<MedicalHistory> {
     );
   }
 
-  void _showDetailsDialog(Map<String, dynamic> recordData, String title) {
-    List<Widget> detailWidgets = [];
-
-    if (title == 'Medical Treatment Record') {
-      detailWidgets.addAll([
-        Text('Facility: ${recordData['treatment_facility'] ?? 'N/A'}'),
-        Text("Doctor's Name: ${recordData['doctor_name'] ?? 'N/A'}"),
-        Text('Date of Visit: ${recordData['date_of_visit'] ?? 'N/A'}'),
-        Text('Time of Visit: ${recordData['time_of_visit'] ?? 'N/A'}'),
-        Text('Remarks: ${recordData['doctor_remarks'] ?? 'N/A'}'),
-      ]);
-    } else if (title == 'Medication History') {
-      detailWidgets.addAll([
-        Text('Medicine: ${recordData['medicine_name'] ?? 'N/A'}'),
-        Text('Instructions: ${recordData['doctor_instructions'] ?? 'N/A'}'),
-        Text("Doctor's Name: ${recordData['doctor_name'] ?? 'N/A'}"),
-        Text('Start Date: ${recordData['start_date'] ?? 'N/A'}'),
-        Text('End Date: ${recordData['end_date'] ?? 'N/A'}'),
-        Text('Remarks: ${recordData['doctor_remarks'] ?? 'N/A'}'),
-        Text('Facility: ${recordData['facility'] ?? 'N/A'}'),
-        Text('Time of Visit: ${recordData['time_of_visit'] ?? 'N/A'}'),
-      ]);
-    }
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: SingleChildScrollView(
-            child: ListBody(children: detailWidgets),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Close'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   Widget buildHistorySection(String title, String collection,
       List<String> displayFields, Map<String, String> fieldLabels) {
-    return FutureBuilder<QuerySnapshot>(
-      future: FirebaseFirestore.instance
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
           .collection(collection)
           .where('user_id', isEqualTo: userId)
-          .get(),
+          .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
         }
         if (!snapshot.hasData || snapshot.hasError) {
           return ElevatedButton(
-            onPressed: () {}, // This can be adjusted as needed
-            child: Text('Enter $title'),
-          );
+              onPressed: () {},
+              child: Text('Enter $title')); // Adjust as needed
         }
 
         List<DocumentSnapshot> documents = snapshot.data!.docs;

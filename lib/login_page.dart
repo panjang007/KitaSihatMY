@@ -3,11 +3,10 @@ import 'package:kitasihat/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:kitasihat/home_page.dart';
 import 'package:kitasihat/bottom_nav_bar.dart';
 import 'package:kitasihat/registration_page.dart';
-import 'package:kitasihat/admin_dashboard_page.dart'; // Adjust this import as necessary
+import 'package:kitasihat/admin_dashboard_page.dart';
 
 class LoginPage extends StatefulWidget {
   final VoidCallback? onTap;
@@ -20,8 +19,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-
   String _errorMessage = '';
+  bool _obscureText = true;
 
   void signUserIn() async {
     setState(() {
@@ -62,8 +61,6 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  bool _obscureText = true;
-
   void navigateToRegistrationPage(BuildContext context) {
     widget.onTap?.call();
     Navigator.push(
@@ -95,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Icon(
-                  Icons.health_and_safety,
+                  Icons.brightness_2,
                   size: 150,
                   color: Color(0xFFFFFFFF),
                 ),

@@ -3,43 +3,43 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:kitasihat/login_page.dart'; // Adjust this import as necessary
 
-class SettingsPage extends StatefulWidget {
-  const SettingsPage({super.key});
+class AdminSettingsPage extends StatefulWidget {
+  const AdminSettingsPage({super.key});
 
   @override
-  _SettingsPageState createState() => _SettingsPageState();
+  _AdminSettingsPageState createState() => _AdminSettingsPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> {
+class _AdminSettingsPageState extends State<AdminSettingsPage> {
   late User user;
-  Map<String, dynamic> userData = {};
+  Map<String, dynamic> adminData = {};
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
     user = FirebaseAuth.instance.currentUser!;
-    _fetchUserData();
+    _fetchAdminData();
   }
 
-  Future<void> _fetchUserData() async {
+  Future<void> _fetchAdminData() async {
     try {
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+      DocumentSnapshot adminDoc = await FirebaseFirestore.instance
           .collection('registration')
           .doc(user.uid)
           .get();
-      if (userDoc.exists) {
+      if (adminDoc.exists) {
         setState(() {
-          userData = userDoc.data() as Map<String, dynamic>;
+          adminData = adminDoc.data() as Map<String, dynamic>;
         });
       } else {
-        print('User document does not exist.');
+        print('Admin document does not exist.');
       }
     } catch (e) {
-      print('Error fetching user data: $e');
+      print('Error fetching admin data: $e');
     } finally {
       setState(() {
-        isLoading = false; // Set isLoading to false regardless of outcome
+        isLoading = false;
       });
     }
   }
@@ -52,11 +52,12 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Future<void> _editUserDetail(String field) async {
-    String? newValue = await _asyncInputDialog(context, field, userData[field]);
+  Future<void> _editAdminDetail(String field) async {
+    String? newValue =
+        await _asyncInputDialog(context, field, adminData[field]);
     if (newValue != null) {
       setState(() {
-        userData[field] = newValue;
+        adminData[field] = newValue;
       });
       FirebaseFirestore.instance
           .collection('registration')
@@ -121,10 +122,10 @@ class _SettingsPageState extends State<SettingsPage> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
-                  _buildDetailCard('Name', userData['name']),
-                  _buildDetailCard('IC Number', userData['ic_number']),
-                  _buildDetailCard('Email', userData['email']),
-                  _buildDetailCard('Phone', userData['phone_number']),
+                  _buildDetailCard('Name', adminData['name']),
+                  _buildDetailCard('IC Number', adminData['ic_number']),
+                  _buildDetailCard('Email', adminData['email']),
+                  _buildDetailCard('Phone', adminData['phone_number']),
                   Spacer(),
                   ElevatedButton(
                     onPressed: _signOut,
@@ -152,7 +153,7 @@ class _SettingsPageState extends State<SettingsPage> {
         trailing: IconButton(
           icon: Icon(Icons.edit, color: Colors.blue),
           onPressed: () =>
-              _editUserDetail(title.toLowerCase().replaceAll(' ', '_')),
+              _editAdminDetail(title.toLowerCase().replaceAll(' ', '_')),
         ),
       ),
     );

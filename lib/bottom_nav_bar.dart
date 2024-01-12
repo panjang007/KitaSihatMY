@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:kitasihat/auth_service_page.dart'; // Import your AuthService class
+import 'package:kitasihat/auth_service_page.dart'; 
 import 'package:kitasihat/appointment_page.dart';
 import 'package:kitasihat/home_page.dart';
 import 'package:kitasihat/login_page.dart';
